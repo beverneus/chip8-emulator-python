@@ -167,15 +167,24 @@ class CPU:
                             self.PC.increment(2)
             case 0xF:
                 match self.NN:
-                    case 0x07:
+                    case 0x07:  # GET time remaining in TIMER and put in VX
                         time_left = timer.get()
                         self.registers[self.X].set(time_left)
-                    case 0x15:
+                    case 0x15: # SET TIMER to VX
                         VX = self.registers[X].get()
                         timer.set(VX)
-                    case 0x18:
+                    case 0x18: # SET BUZZER to VX
                         VX = self.registers[X].get()
                         buzzer.set(VX)
+                    case 0x1E: # ADD VX to I, SETTING VF if I OVERFLOWS above 0x1000
+                        VI = self.I.get() 
+                        VX = self.registers[self.X].get()
+                        VI += VX
+                        if VI > 0x1000:
+                            self.registers[0xF].set(1)
+                        else:
+                            self.registers[0xF].set(0)
+                        self.I.set(VI)
 
 
 memory = Memory(4096)
