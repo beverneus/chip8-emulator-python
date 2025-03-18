@@ -74,7 +74,7 @@ class Timer:
         self.time = 0
         self.last_set = 0
         self.buzzer = buzzer
-        self.beep_sound = pygame.mixer.Sound("src/beep.wav")
+        self.beep_sound = pygame.mixer.Sound("assets/audio/beep.wav")
 
     def set(self, amount):
         self.time=amount
@@ -181,7 +181,7 @@ timer = Timer()
 buzzer = Timer(True)
 
 # LOAD FONT
-with open('src/font.txt', 'r', encoding='UTF-8') as font:
+with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
     content = font.read().replace('\n', ' ').strip()
     data = map(lambda t: int(t, 16), content.split(', '))
     for adress, code in zip(range(int(0x50), int(0x9F)+1), data):
