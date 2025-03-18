@@ -15,7 +15,7 @@ MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIF
 MODERN_JUMP_WITH_OFFSET = False
 
 class CPU:
-    def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack):
+    def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack, timer, buzzer):
         self.opcode = 0
         self.category = 0
         self.X = 0
@@ -23,12 +23,15 @@ class CPU:
         self.N = 0
         self.NN = 0
         self.NNN = 0
+
         self.memory = memory
         self.PC = PC
         self.I = I
         self.registers = registers
         self.display = display
         self.stack = stack
+        self.timer = timer
+        self.buzzer = buzzer
 
     def fetch(self):
         PC_value = self.PC.get()
@@ -156,14 +159,23 @@ class CPU:
                 VX = self.registers[self.X].get()
                 pressed = SCANCODES[VX] in keys_pressed
                 match self.NN:
-                    case 0x9E: # is PRESSED
+                    case 0x9E:  # is PRESSED
                         if pressed:
                             self.PC.increment(2)
                     case 0xA1: # is NOT PRESSED
                         if not pressed:
                             self.PC.increment(2)
             case 0xF:
-                pass
+                match self.NN:
+                    case 0x07:
+                        time_left = timer.get()
+                        self.registers[self.X].set(time_left)
+                    case 0x15:
+                        VX = self.registers[X].get()
+                        timer.set(VX)
+                    case 0x18:
+                        VX = self.registers[X].get()
+                        buzzer.set(VX)
 
 
 memory = Memory(4096)
@@ -197,7 +209,7 @@ for i in range(0, len(rom_hex), 2):
     B = rom_hex[i+1]
     memory.write(0x200+i//2, int(f'0x{A}{B}', 16))
 
-cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display, stack=stack)
+cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display, stack=stack, timer=timer, buzzer=buzzer)
 
 SCANCODES = (0x02, 0x03, 0x04, 0x05, # 1, 2, 3, 4
              0x10, 0x11, 0x12, 0x13, # Q, W, E, R

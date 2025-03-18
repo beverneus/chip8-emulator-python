@@ -7,7 +7,7 @@ class Timer:
         self.time = 0
         self.last_set = 0
         self.buzzer = buzzer
-        self.beep_sound = pygame.mixer.Sound("assets/audio/beep.wav")
+        self.beep_sound = pygame.mixer.Sound("assets/audio/beep.wav") if beep_sound is None else beep_sound
 
     def set(self, amount):
         self.time = amount
