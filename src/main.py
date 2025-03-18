@@ -9,6 +9,8 @@ from stack import Stack
 from display import Display
 from timer import Timer
 
+MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIFT
+
 class CPU:
     def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack):
         self.opcode = 0
@@ -103,10 +105,22 @@ class CPU:
                         VY = self.registers[self.Y].get()
                         VX -= VY
                         self.registers[self.X].set(VX)
+                    case 0x6: # (OPTIONALLY SET VX TO VY) SHIFT VX RIGHT by 1
+                        if not MODERN_SHIFT:
+                            VX = self.registers[self.Y].get() >> 1
+                        else:
+                            VX = self.registers[self.X].get() >> 1
+                        self.registers[self.X].set(VX)
                     case 0x7: # SET VX to VY - VX
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
                         VX = VY - VX
+                        self.registers[self.X].set(VX)
+                    case 0xE: # (OPTIONALLY SET VX TO VY) SHIFT VX LEFT by 1
+                        if not MODERN_SHIFT:
+                            VX = self.registers[self.Y].get() << 1
+                        else:
+                            VX = self.registers[self.X].get() << 1
                         self.registers[self.X].set(VX)
             case 0x9: # VX != VY
                 if self.registers[self.X].get() != self.registers[self.Y].get():
