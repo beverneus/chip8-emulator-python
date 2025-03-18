@@ -1,6 +1,6 @@
 class Registry:
     def __init__(self):
-        self.value = None
+        self.value = 0
 
     def set(self, value):
         self.value = value
