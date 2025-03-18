@@ -111,8 +111,13 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(adress, code)
 
 # LOAD ROM
-pass
-
+rom_location = 'assets/roms/IBM_Logo.ch8'
+with open(rom_location, 'rb') as rom:
+    rom_hex = rom.read().hex()
+for i in range(0, len(rom_hex), 2):
+    A = rom_hex[i]
+    B = rom_hex[i+1]
+    memory.write(0x200+i//2, int(f'0x{A}{B}', 16))
 cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display)
 
 clock = pygame.time.Clock()
