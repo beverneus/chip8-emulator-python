@@ -89,6 +89,15 @@ class CPU:
                         VY = self.registers[self.Y].get()
                         VX = VX ^ VY
                         self.registers[self.X].set(VX)
+                    case 0x4: # SET VX to SUM of VX and VY, IF VX overflows SET VF to 1 ELSE SET VF to 0
+                        VX = self.registers[self.X].get()
+                        VY = self.registers[self.Y].get()
+                        VX += VY
+                        if VX >= 255:
+                            self.registers[0xF].set(1)
+                        else:
+                            self.registers[0xF].set(0)
+                        self.registers[self.X].set(VX)
             case 0x9: # VX != VY
                 if self.registers[self.X].get() != self.registers[self.Y].get():
                     self.PC.increment(2)
