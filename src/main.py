@@ -73,13 +73,14 @@ class CPU:
             case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY WITH N VERTICAL LINES
                 x = self.registers[self.X].get() % (self.display.width - 1)
                 y = self.registers[self.Y].get()
-                sprite = [memory[i] for i in range(self.I, self.I+self.N)]
+                I_value = self.I.get()
+                sprite = [self.memory.read(i) for i in range(I_value, I_value+self.N)]
                 for i, line in enumerate(sprite):
                     assert i < self.N, 'Sprite lines go further than N'
-                    byte = bin(line)[2:]
+                    byte = f'{line:08b}'
                     for j in range(8):
-                        if byte[j] == 1:
-                            self.display.flip(x + j, y + i)
+                        if int(byte[j]) == 1:
+                            self.display.flip_pixel(x + j, y + i)
                 self.display.blit()
             case 0xE:
                 pass
