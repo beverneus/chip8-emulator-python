@@ -90,8 +90,9 @@ class CPU:
 
 memory = Memory(4096)
 
-PC = Registry()
-I = Registry()
+PC = Registry(None)
+PC.set(0x200)
+I = Registry(16)
 
 registers = [Registry() for i in range(16)]
 
