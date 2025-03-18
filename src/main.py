@@ -3,6 +3,8 @@ import math
 import numpy as np
 import pygame
 from typing import Type
+import random
+
 from memory import Memory
 from registry import Registry, ProgramCounter
 from stack import Stack
@@ -10,6 +12,7 @@ from display import Display
 from timer import Timer
 
 MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIFT
+MODERN_JUMP_WITH_OFFSET = False
 
 class CPU:
     def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack):
@@ -134,6 +137,9 @@ class CPU:
                     X = 0
                 address = self.NNN + self.registers[X].get()
                 self.PC.set(address)
+            case 0xC: # GENERATE RANDOM NUMBER and BITWISE AND with NN put result in VX
+                result = random.randint(0, 255) & self.NN
+                self.registers[self.X].set(result)
             case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY WITH N VERTICAL LINES
                 x = self.registers[self.X].get() % (self.display.width - 1)
                 y = self.registers[self.Y].get()
@@ -146,8 +152,16 @@ class CPU:
                         if int(byte[j]) == 1:
                             self.display.flip_pixel(x + j, y + i)
                 self.display.blit()
-            case 0xE:
-                pass
+            case 0xE: # SKIP if key
+                VX = self.registers[self.X].get()
+                pressed = SCANCODES[VX] in keys_pressed
+                match self.NN:
+                    case 0x9E: # is PRESSED
+                        if pressed:
+                            self.PC.increment(2)
+                    case 0xA1: # is NOT PRESSED
+                        if not pressed:
+                            self.PC.increment(2)
             case 0xF:
                 pass
 
@@ -185,6 +199,13 @@ for i in range(0, len(rom_hex), 2):
 
 cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display, stack=stack)
 
+SCANCODES = (0x02, 0x03, 0x04, 0x05, # 1, 2, 3, 4
+             0x10, 0x11, 0x12, 0x13, # Q, W, E, R
+             0x1E, 0x1F, 0x20, 0x21, # A, S, D, F
+             0x2C, 0x2D, 0x2E, 0x2F  # Z, X, C, V
+             )
+keys_pressed = set()
+
 clock = pygame.time.Clock()
 running = True
 while running:
@@ -192,7 +213,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            display.flip_pixel(13,13)
+            keys_pressed.add(event.scancode)
+        elif event.type == pygame.KEYUP:
+            if event.scancode in keys_pressed:
+                keys_pressed.remove(event.scancode)
+            
     cpu.fetch()
     cpu.decode()
     
