@@ -74,6 +74,11 @@ class CPU:
                     case 0x0:  # SET VX to VY
                         VY = self.registers[self.Y].get()
                         self.registers[self.X].set(VY)
+                    case 0x1: # SET VX to BINARY OR of VX and VY
+                        VX = self.registers[self.X].get()
+                        VY = self.registers[self.Y].get()
+                        VX = VX | VY
+                        self.registers[self.X].set(VX)
             case 0x9: # VX != VY
                 if self.registers[self.X].get() != self.registers[self.Y].get():
                     self.PC.increment(2)
