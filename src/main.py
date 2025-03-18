@@ -70,12 +70,17 @@ class CPU:
                 pass
             case 0xC:
                 pass
-            case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY
-                x = self.registers[self.X].get() % self.display.width
+            case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY WITH N VERTICAL LINES
+                x = self.registers[self.X].get() % (self.display.width - 1)
                 y = self.registers[self.Y].get()
-                pass
-                
-                
+                sprite = [memory[i] for i in range(self.I, self.I+self.N)]
+                for i, line in enumerate(sprite):
+                    assert i < self.N, 'Sprite lines go further than N'
+                    byte = bin(line)[2:]
+                    for j in range(8):
+                        if byte[j] == 1:
+                            self.display.flip(x + j, y + i)
+                self.display.blit()
             case 0xE:
                 pass
             case 0xF:

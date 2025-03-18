@@ -27,9 +27,10 @@ class Display:
         self.canvas.fill(BLACK)
 
     def flip_pixel(self, x, y):
-        color = BLACK if self.state[x, y] else WHITE
-        self.canvas.set_at((x, y), color)
-        self.state[x, y] = (self.state[x, y] + 1) % 2
+        if x < self.width and y < self.height:
+            color = BLACK if self.state[x, y] else WHITE
+            self.canvas.set_at((x, y), color)
+            self.state[x, y] = (self.state[x, y] + 1) % 2
 
     def blit(self):
         scaled_canvas = pygame.transform.scale(self.canvas, (self.dwidth, self.dheight))
