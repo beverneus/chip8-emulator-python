@@ -4,7 +4,7 @@ import numpy as np
 import pygame
 
 from memory import Memory
-from registry import Registry
+from registry import Registry, ProgramCounter
 from stack import Stack
 from display import Display
 from timer import Timer
@@ -28,7 +28,7 @@ class CPU:
         PC_value = self.PC.get()
         a = f"{self.memory.read(PC_value):08b}"
         b = f"{self.memory.read(PC_value+1):08b}"
-        self.PC.set(PC_value + 2)
+        self.PC.increment(2)
         self.opcode = a + b
         
     def decode(self):
@@ -90,8 +90,7 @@ class CPU:
 
 memory = Memory(4096)
 
-PC = Registry(None)
-PC.set(0x200)
+PC = ProgramCounter()
 I = Registry(16)
 
 registers = [Registry() for i in range(16)]

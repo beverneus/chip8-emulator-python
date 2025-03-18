@@ -13,3 +13,11 @@ class Registry:
 
     def get(self):
         return self.value
+
+class ProgramCounter(Registry):
+    def __init__(self):
+        self.value = 0x200
+        self.max_value = None
+    
+    def increment(self, amount):
+        self.value += amount
