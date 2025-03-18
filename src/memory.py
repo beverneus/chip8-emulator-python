@@ -8,4 +8,4 @@ class Memory:
         self.data[address] = byte
 
     def read(self, adress):
-        return self.data[adress]
+        return int(self.data[adress])
