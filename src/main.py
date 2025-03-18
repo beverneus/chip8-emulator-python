@@ -26,22 +26,22 @@ class CPU:
 
     def fetch(self):
         PC_value = self.PC.get()
-        a = f"{self.memory.read(PC_value):07b}"
-        b = f"{self.memory.read(PC_value):07b}"
+        a = f"{self.memory.read(PC_value):08b}"
+        b = f"{self.memory.read(PC_value+1):08b}"
         self.PC.set(PC_value + 2)
-        self.opcode = int(a + b)
+        self.opcode = a + b
         
     def decode(self):
         #DECODE/EXECUTE
-        self.category = self.opcode & 61440 # Get first 4 binary digits
-        self.X = self.opcode & 3840 # Get second 4 binary digits
-        self.Y = self.opcode & 240 # Get third 4 binary digits
-        self.N = self.opcode & 15 # Get last 4 binary digits
-        self.NN = self.opcode & 255 # Get second byte
-        self.NNN = self.opcode & 4095 # Get everything except first 4 binary digits
+        self.category = int(self.opcode[:4], 2) # Get first 4 binary digits
+        self.X = int(self.opcode[4:8], 2) # Get second 4 binary digits
+        self.Y = int(self.opcode[8:12], 2) # Get third 4 binary digits
+        self.N = int(self.opcode[12:], 2) # Get last 4 binary digits
+        self.NN = int(self.opcode[8:], 2) # Get second byte
+        self.NNN = int(self.opcode[4:], 2) # Get everything except first 4 binary digits
 
         match self.category:
-            case 0x0:
+            case 0x0000:
                 if self.NNN == 0x0E0: # CLEAR SCREEN
                     self.display.clear()
             case 0x1: # SET PC TO NNN
