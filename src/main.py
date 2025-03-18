@@ -127,10 +127,13 @@ class CPU:
                     self.PC.increment(2)
             case 0xA: # SET INDEX TO NNN
                 self.I.set(self.NNN)
-            case 0xB:
-                pass
-            case 0xC:
-                pass
+            case 0xB: # JUMP to NNN +  V0 (or with modern switch jump to XNN + VX)
+                if MODERN_JUMP_WITH_OFFSET:
+                    X = self.X
+                else:
+                    X = 0
+                address = self.NNN + self.registers[X].get()
+                self.PC.set(address)
             case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY WITH N VERTICAL LINES
                 x = self.registers[self.X].get() % (self.display.width - 1)
                 y = self.registers[self.Y].get()
