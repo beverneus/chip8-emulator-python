@@ -48,7 +48,7 @@ class CPU:
                         self.display.clear()
                     case 0xEE:  # RETURN FROM SUBROUTINE
                         address = self.stack.pop()
-                        self.PC.set(adress)
+                        self.PC.set(address)
             case 0x1: # SET PC TO NNN
                 self.PC.set(self.NNN)
             case 0x2:  # START SUBROUTINE AT NNN
@@ -135,8 +135,8 @@ buzzer = Timer(True)
 with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
     content = font.read().replace('\n', ' ').strip()
     data = map(lambda t: int(t, 16), content.split(', '))
-    for adress, code in zip(range(int(0x50), int(0x9F)+1), data):
-        memory.write(adress, code)
+    for address, code in zip(range(int(0x50), int(0x9F)+1), data):
+        memory.write(address, code)
 
 # LOAD ROM
 rom_location = 'assets/roms/test_opcode.ch8'
