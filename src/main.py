@@ -2,7 +2,7 @@ import time
 import math
 import numpy as np
 import pygame
-
+from typing import Type
 from memory import Memory
 from registry import Registry, ProgramCounter
 from stack import Stack
@@ -10,7 +10,7 @@ from display import Display
 from timer import Timer
 
 class CPU:
-    def __init__(self, memory, PC, I, registers, display, stack):
+    def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack):
         self.opcode = 0
         self.category = 0
         self.X = 0
@@ -54,22 +54,29 @@ class CPU:
             case 0x2:  # START SUBROUTINE AT NNN
                 self.stack.push(self.PC.get())
                 self.PC.set(self.NNN)
-            case 0x3:
-                pass
-            case 0x4:
-                pass
-            case 0x5:
-                pass
-            case 0x6: # Set VX to NN
+            case 0x3: # VX == NN
+                if self.registers[self.X].get() == self.NN:
+                    self.PC.increment(2)
+            case 0x4: # VX != NN
+                if self.registers[self.X].get() != self.NN:
+                    self.PC.increment(2)
+            case 0x5: # VX == VY
+                if self.registers[self.X].get() == self.registers[self.Y].get():
+                    self.PC.increment(2)
+            case 0x6: # SET VX to NN
                 self.registers[self.X].set(self.NN)
             case 0x7: # ADD NN to VX
                 register = self.registers[self.X]
                 value = register.get()
                 register.set(value + self.NN)
             case 0x8:
-                pass
-            case 0x9:
-                pass
+                match self.N:
+                    case 0x0:  # SET VX to VY
+                        VY = self.registers[self.Y].get()
+                        self.registers[self.X].set(VY)
+            case 0x9: # VX != VY
+                if self.registers[self.X].get() != self.registers[self.Y].get():
+                    self.PC.increment(2)
             case 0xA: # SET INDEX TO NNN
                 self.I.set(self.NNN)
             case 0xB:
