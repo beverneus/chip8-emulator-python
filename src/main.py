@@ -127,12 +127,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            display.flip_pixel(10, 10)
-
+            display.flip_pixel(13,13)
+    cpu.fetch()
+    cpu.decode()
+    
     timer.update()
     buzzer.update()
-    
-    display.blit()
-    pygame.display.flip()
-    
+        
     clock.tick(700)
+    display.blit()
