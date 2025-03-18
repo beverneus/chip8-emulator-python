@@ -10,7 +10,7 @@ from display import Display
 from timer import Timer
 
 class CPU:
-    def __init__(self, memory, PC, I, registers, display):
+    def __init__(self, memory, PC, I, registers, display, stack):
         self.opcode = 0
         self.category = 0
         self.X = 0
@@ -23,6 +23,7 @@ class CPU:
         self.I = I
         self.registers = registers
         self.display = display
+        self.stack = stack
 
     def fetch(self):
         PC_value = self.PC.get()
@@ -30,9 +31,9 @@ class CPU:
         b = f"{self.memory.read(PC_value+1):08b}"
         self.PC.increment(2)
         self.opcode = a + b
-        
+
     def decode(self):
-        #DECODE/EXECUTE
+        # DECODE/EXECUTE
         self.category = int(self.opcode[:4], 2) # Get first 4 binary digits
         self.X = int(self.opcode[4:8], 2) # Get second 4 binary digits
         self.Y = int(self.opcode[8:12], 2) # Get third 4 binary digits
@@ -42,12 +43,17 @@ class CPU:
 
         match self.category:
             case 0x0000:
-                if self.NNN == 0x0E0: # CLEAR SCREEN
-                    self.display.clear()
+                match self.NN:
+                    case 0x00:  # CLEAR SCREEN
+                        self.display.clear()
+                    case 0xEE:  # RETURN FROM SUBROUTINE
+                        address = self.stack.pop()
+                        self.PC.set(adress)
             case 0x1: # SET PC TO NNN
                 self.PC.set(self.NNN)
-            case 0x2:
-                pass
+            case 0x2:  # START SUBROUTINE AT NNN
+                self.stack.push(self.PC.get())
+                self.PC.set(self.NNN)
             case 0x3:
                 pass
             case 0x4:
@@ -89,6 +95,7 @@ class CPU:
 
 
 memory = Memory(4096)
+stack = Stack()
 
 PC = ProgramCounter()
 I = Registry(16)
@@ -117,7 +124,8 @@ for i in range(0, len(rom_hex), 2):
     A = rom_hex[i]
     B = rom_hex[i+1]
     memory.write(0x200+i//2, int(f'0x{A}{B}', 16))
-cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display)
+
+cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display, stack=stack)
 
 clock = pygame.time.Clock()
 running = True
