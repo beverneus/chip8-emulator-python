@@ -185,6 +185,9 @@ class CPU:
                         else:
                             self.registers[0xF].set(0)
                         self.I.set(VI)
+                    case 0x0A: # BREAK until KEY PRESSED
+                        if len(keys_pressed) == 0:
+                            self.PC.increment(-2)
 
 
 memory = Memory(4096)
