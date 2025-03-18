@@ -3,95 +3,11 @@ import math
 import numpy as np
 import pygame
 
-class Memory:
-    def __init__(self, size):
-        self.data = np.zeros(size)
-    
-    def write(self, address, byte):
-        self.data[address] = byte
-    
-    def read(self, adress):
-        return self.data[adress]
-
-
-class Registry:
-    def __init__(self):
-        self.value = None
-    
-    def set(self, value):
-        self.value = value
-    
-    def get(self):
-        return self.value
-
-
-class Stack:
-    def __init__(self):
-        stack = []
-    
-    def push(self, data):
-        self.stack.append(data)
-    
-    def pop(self):
-        return self.stack.pop()
-
-BLACK = pygame.Color(0, 0, 0)
-WHITE = pygame.Color(255, 255, 255)
-
-class Display:
-    def __init__(self, width, height, scale):
-        self.width = width
-        self.height = height
-        
-        self.scale = scale
-        self.dwidth = self.scale * self.width
-        self.dheight = self.scale * self.height
-        
-        self.state = np.zeros((self.width, self.height))
-        
-        self.screen = pygame.display.set_mode((self.dwidth, self.dheight))
-        pygame.display.set_caption('CHIP-8')
-        
-        self.canvas = pygame.Surface((self.width, self.height))
-        self.canvas.fill(BLACK)
-    
-    def clear(self):
-        self.state = np.zeros((self.width, self.height))
-        self.canvas.fill(BLACK)
-    
-    def flip_pixel(self, x, y):
-        color = BLACK if self.state[x, y] else WHITE
-        self.canvas.set_at((x, y), color)
-        self.state[x, y] = (self.state[x,y] + 1) % 2
-        
-    def blit(self):
-        scaled_canvas = pygame.transform.scale(self.canvas, (self.dwidth, self.dheight))
-        self.screen.blit(scaled_canvas, (0, 0))
-
-
-class Timer:
-    def __init__(self, buzzer=False, beep_sound=None):
-        self.time = 0
-        self.last_set = 0
-        self.buzzer = buzzer
-        self.beep_sound = pygame.mixer.Sound("assets/audio/beep.wav")
-
-    def set(self, amount):
-        self.time=amount
-        self.last_set = time.time()
-
-    def update(self):
-        if self.time != 0:
-            current_time = time.time()
-            diff = math.floor((current_time - self.last_set) / (1 / 60))
-            self.time -= diff
-            self.last_set = current_time if diff != 0 else self.last_set
-            if self.buzzer and diff and self.time%30 == 0:
-                self.beep_sound.play()
-
-
-    def get(self):
-        return self.time
+from memory import Memory
+from registry import Registry
+from stack import Stack
+from display import Display
+from timer import Timer
 
 class CPU:
     def __init__(self, memory, PC, I, registers, display):
