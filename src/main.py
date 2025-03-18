@@ -218,7 +218,7 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(address, code)
 
 # LOAD ROM
-rom_location = 'assets/roms/test_opcode.ch8'
+rom_location = 'assets/roms/bc_test.ch8'
 with open(rom_location, 'rb') as rom:
     rom_hex = rom.read().hex()
 for i in range(0, len(rom_hex), 2):
