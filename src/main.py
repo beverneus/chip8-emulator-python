@@ -98,6 +98,16 @@ class CPU:
                         else:
                             self.registers[0xF].set(0)
                         self.registers[self.X].set(VX)
+                    case 0x5: # SET VX to VX - VY
+                        VX = self.registers[self.X].get()
+                        VY = self.registers[self.Y].get()
+                        VX -= VY
+                        self.registers[self.X].set(VX)
+                    case 0x7: # SET VX to VY - VX
+                        VX = self.registers[self.X].get()
+                        VY = self.registers[self.Y].get()
+                        VX = VY - VX
+                        self.registers[self.X].set(VX)
             case 0x9: # VX != VY
                 if self.registers[self.X].get() != self.registers[self.Y].get():
                     self.PC.increment(2)
@@ -131,7 +141,7 @@ stack = Stack()
 PC = ProgramCounter()
 I = Registry(16)
 
-registers = [Registry() for i in range(16)]
+registers = [Registry(8) for i in range(16)]
 
 pygame.init()
 pygame.mixer.init()
