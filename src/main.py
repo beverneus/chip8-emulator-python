@@ -188,6 +188,11 @@ class CPU:
                     case 0x0A: # BREAK until KEY PRESSED
                         if len(keys_pressed) == 0:
                             self.PC.increment(-2)
+                    case 0x29: # SET I to ADRESS of FONT_CHARACTER in VX
+                        VX = self.registers[self.X].get()
+                        character = VX & 0b00001111
+                        character_adress = 0x50 + character
+                        self.I.set(character_adress)
 
 
 memory = Memory(4096)
