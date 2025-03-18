@@ -35,3 +35,4 @@ class Display:
     def blit(self):
         scaled_canvas = pygame.transform.scale(self.canvas, (self.dwidth, self.dheight))
         self.screen.blit(scaled_canvas, (0, 0))
+        pygame.display.flip()
