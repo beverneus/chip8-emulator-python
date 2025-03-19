@@ -52,7 +52,7 @@ class CPU:
         match self.category:
             case 0x0000:
                 match self.NN:
-                    case 0x00:  # CLEAR SCREEN
+                    case 0xE0:  # CLEAR SCREEN
                         self.display.clear()
                         self.display.blit()
                     case 0xEE:  # RETURN FROM SUBROUTINE
