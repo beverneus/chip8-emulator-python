@@ -2,6 +2,7 @@ import pygame
 from typing import Type
 import random
 import argparse
+import os
 
 from memory import Memory
 from registry import Registry, ProgramCounter
@@ -11,6 +12,9 @@ from timer import Timer
 
 MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIFT
 MODERN_JUMP_WITH_OFFSET = False
+
+# Set correct cwd
+os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 class CPU:
     def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack, timer, buzzer):
@@ -223,13 +227,12 @@ class CPU:
                             Vi = self.memory.read(VI + i)
                             self.registers[i].set(Vi)
 
-
 # PARSE COMMAND LINE ARGUMENTS
 parser = argparse.ArgumentParser(description='CHIP-8 emulator')
 parser.add_argument(
     "-f",
     "--file",
-    default="/home/larsdevolder/Documents/Code/chip8/assets/roms/tests/IBM_Logo.ch8",
+    default= "assets/roms/tests/IBM_Logo.ch8",
     help="path to ROM you want to load",
 )
 parser.add_argument('-s', '--speed', default=700, help='Number of instructions per second')
