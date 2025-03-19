@@ -101,33 +101,43 @@ class CPU:
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
                         VX += VY
+                        self.registers[self.X].set(VX)
                         if VX >= 255:
                             self.registers[0xF].set(1)
                         else:
                             self.registers[0xF].set(0)
-                        self.registers[self.X].set(VX)
                     case 0x5: # SET VX to VX - VY
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
+                        VF = 1 if VX >= VY else 0
                         VX -= VY
                         self.registers[self.X].set(VX)
+                        self.registers[0xF].set(VF)
                     case 0x6: # (OPTIONALLY SET VX TO VY) SHIFT VX RIGHT by 1
                         if not MODERN_SHIFT:
-                            VX = self.registers[self.Y].get() >> 1
+                            VX = self.registers[self.Y].get()
                         else:
-                            VX = self.registers[self.X].get() >> 1
+                            VX = self.registers[self.X].get()
+                        VF = VX & 0b1
+                        VX = VX >> 1
                         self.registers[self.X].set(VX)
+                        self.registers[0xF].set(VF)
                     case 0x7: # SET VX to VY - VX
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
+                        VF = 1 if VY >= VX else 0
                         VX = VY - VX
                         self.registers[self.X].set(VX)
+                        self.registers[0xF].set(VF)
                     case 0xE: # (OPTIONALLY SET VX TO VY) SHIFT VX LEFT by 1
                         if not MODERN_SHIFT:
-                            VX = self.registers[self.Y].get() << 1
+                            VX = self.registers[self.Y].get()
                         else:
-                            VX = self.registers[self.X].get() << 1
+                            VX = self.registers[self.X].get()
+                        VF = (VX & 0b10000000) >> 7
+                        VX = VX << 1
                         self.registers[self.X].set(VX)
+                        self.registers[0xF].set(VF)
             case 0x9: # VX != VY
                 if self.registers[self.X].get() != self.registers[self.Y].get():
                     self.PC.increment(2)
@@ -234,7 +244,7 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(address, code)
 
 # LOAD ROM
-rom_location = 'assets/roms/3-corax+.ch8'
+rom_location = 'assets/roms/4-flags.ch8'
 with open(rom_location, 'rb') as rom:
     rom_hex = rom.read().hex()
 for i in range(0, len(rom_hex), 2):
