@@ -255,11 +255,24 @@ for i in range(0, len(rom_hex), 2):
 
 cpu = CPU(memory=memory, PC=PC, I=I, registers=registers, display=display, stack=stack, timer=timer, buzzer=buzzer)
 
-SCANCODES = (0x02, 0x03, 0x04, 0x05, # 1, 2, 3, 4
-             0x10, 0x11, 0x12, 0x13, # Q, W, E, R
-             0x1E, 0x1F, 0x20, 0x21, # A, S, D, F
-             0x2C, 0x2D, 0x2E, 0x2F  # Z, X, C, V
-             )
+SCANCODES = (
+    0x1B,
+    0x1E,
+    0x1F,
+    0x20,
+    0x14,
+    0x1A,
+    0x08,
+    0x04,
+    0x16,
+    0x07,
+    0x1D,
+    0x06,
+    0x21,
+    0x15,
+    0x09,
+    0x19,
+)
 keys_pressed = set()
 
 clock = pygame.time.Clock()
