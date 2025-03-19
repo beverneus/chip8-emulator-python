@@ -200,6 +200,15 @@ class CPU:
                         self.memory.write(VI,   a)
                         self.memory.write(VI+1, b)
                         self.memory.write(VI+2, c)
+                    case 0x55: # STORE VALUES in REGISTERS V0 to VX (inclusive) in MEMORY starting at I
+                        VI = self.I.get()
+                        for i in range(self.X+1):
+                            self.memory.write(VI+i, self.registers[i].get())
+                    case 0x65: # READ VALUES in MEMORY FROM I to I+X and STORE in registers V0 to VX
+                        VI = self.I.get()
+                        for i in range(self.X + 1):
+                            Vi = self.memory.read(VI + i)
+                            self.registers[i].set(Vi)
 
 
 memory = Memory(4096)
