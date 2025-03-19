@@ -1,6 +1,7 @@
 import pygame
 from typing import Type
 import random
+import argparse
 
 from memory import Memory
 from registry import Registry, ProgramCounter
@@ -219,6 +220,20 @@ class CPU:
                             self.registers[i].set(Vi)
 
 
+# PARSE COMMAND LINE ARGUMENTS
+parser = argparse.ArgumentParser(description='CHIP-8 emulator')
+parser.add_argument(
+    "-f",
+    "--file",
+    default="/home/larsdevolder/Documents/Code/chip8/assets/roms/tests/IBM_Logo.ch8",
+    help="path to ROM you want to load",
+)
+parser.add_argument('-s', '--speed', default=700, help='Number of instructions per second')
+args = parser.parse_args()
+
+rom_location = args.file
+processor_speed = args.speed
+
 memory = Memory(4096)
 stack = Stack()
 
@@ -242,7 +257,7 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(address, code)
 
 # LOAD ROM
-rom_location = 'assets/roms/games/slipperyslope.ch8'
+# rom_location = 'assets/roms/games/slipperyslope.ch8'
 with open(rom_location, 'rb') as rom:
     rom_hex = rom.read().hex()
 for i in range(0, len(rom_hex), 2):
@@ -290,4 +305,4 @@ while running:
     timer.update()
     buzzer.update()
         
-    clock.tick(700)
+    clock.tick(processor_speed)
