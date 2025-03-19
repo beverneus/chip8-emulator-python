@@ -1,5 +1,3 @@
-import time
-import math
 import numpy as np
 import pygame
 from typing import Type
@@ -245,7 +243,7 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(address, code)
 
 # LOAD ROM
-rom_location = 'assets/roms/tests/5-quirks.ch8'
+rom_location = 'assets/roms/games/slipperyslope.ch8'
 with open(rom_location, 'rb') as rom:
     rom_hex = rom.read().hex()
 for i in range(0, len(rom_hex), 2):
