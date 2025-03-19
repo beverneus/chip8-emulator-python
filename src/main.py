@@ -155,6 +155,7 @@ class CPU:
             case 0xD: # DISPLAY SPRITE LOCATED IN MEMORY LOCATION I AT VX AND VY WITH N VERTICAL LINES
                 x = self.registers[self.X].get() % (self.display.width - 1)
                 y = self.registers[self.Y].get()
+                VF = 0
                 I_value = self.I.get()
                 sprite = [self.memory.read(i) for i in range(I_value, I_value+self.N)]
                 for i, line in enumerate(sprite):
@@ -162,7 +163,8 @@ class CPU:
                     byte = f'{line:08b}'
                     for j in range(8):
                         if int(byte[j]) == 1:
-                            self.display.flip_pixel(x + j, y + i)
+                            VF = max(self.display.flip_pixel(x + j, y + i), VF)
+                self.registers[0xF].set(VF)
                 self.display.blit()
             case 0xE: # SKIP if key
                 VX = self.registers[self.X].get()
