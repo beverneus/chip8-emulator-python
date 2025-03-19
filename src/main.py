@@ -171,10 +171,10 @@ class CPU:
                         time_left = timer.get()
                         self.registers[self.X].set(time_left)
                     case 0x15: # SET TIMER to VX
-                        VX = self.registers[X].get()
+                        VX = self.registers[self.X].get()
                         timer.set(VX)
                     case 0x18: # SET BUZZER to VX
-                        VX = self.registers[X].get()
+                        VX = self.registers[self.X].get()
                         buzzer.set(VX)
                     case 0x1E: # ADD VX to I, SETTING VF if I OVERFLOWS above 0x1000
                         VI = self.I.get() 
@@ -193,6 +193,13 @@ class CPU:
                         character = VX & 0b00001111
                         character_adress = 0x50 + character
                         self.I.set(character_adress)
+                    case 0x33: # SPLIT VX in its three decimal parts 'abc', PUT in MEMORY a at I, b at I+1, c at I+2
+                        VX = self.registers[self.X].get()
+                        VI = self.I.get()
+                        a, b, c = f'{VX:03d}'
+                        self.memory.write(VI,   a)
+                        self.memory.write(VI+1, b)
+                        self.memory.write(VI+2, c)
 
 
 memory = Memory(4096)
