@@ -54,6 +54,7 @@ class CPU:
                 match self.NN:
                     case 0x00:  # CLEAR SCREEN
                         self.display.clear()
+                        self.display.blit()
                     case 0xEE:  # RETURN FROM SUBROUTINE
                         address = self.stack.pop()
                         self.PC.set(address)
@@ -244,7 +245,7 @@ with open('assets/fonts/font.txt', 'r', encoding='UTF-8') as font:
         memory.write(address, code)
 
 # LOAD ROM
-rom_location = 'assets/roms/4-flags.ch8'
+rom_location = 'assets/roms/tests/5-quirks.ch8'
 with open(rom_location, 'rb') as rom:
     rom_hex = rom.read().hex()
 for i in range(0, len(rom_hex), 2):
@@ -280,4 +281,3 @@ while running:
     buzzer.update()
         
     clock.tick(700)
-    display.blit()
