@@ -1,4 +1,3 @@
-import numpy as np
 import pygame
 from typing import Type
 import random
