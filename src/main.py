@@ -163,7 +163,9 @@ class CPU:
                     byte = f'{line:08b}'
                     for j in range(8):
                         if int(byte[j]) == 1:
-                            VF = max(self.display.flip_pixel(x + j, y + i), VF)
+                            return_code = self.display.flip_pixel(x + j, y + i)
+                            if return_code == 1:
+                                VF = 1
                 self.registers[0xF].set(VF)
                 self.display.blit()
             case 0xE: # SKIP if key
