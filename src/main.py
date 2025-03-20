@@ -239,7 +239,7 @@ parser.add_argument('-s', '--speed', default=700, help='Number of instructions p
 args = parser.parse_args()
 
 rom_location = args.file
-processor_speed = args.speed
+processor_speed = int(args.speed)
 
 memory = Memory(4096)
 stack = Stack()
