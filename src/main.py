@@ -10,8 +10,9 @@ from stack import Stack
 from display import Display
 from timer import Timer
 
+VF_RESET = True # Reset VF register after AND, OR, and XOR opcode
 MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIFT
-MODERN_JUMP_WITH_OFFSET = False
+MODERN_JUMP_WITH_OFFSET = True
 
 # Set correct cwd
 os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
@@ -90,16 +91,22 @@ class CPU:
                         VY = self.registers[self.Y].get()
                         VX = VX | VY
                         self.registers[self.X].set(VX)
+                        if VF_RESET:
+                            self.registers[0xF].set(0)
                     case 0x2: # SET VX to BINARY AND of VX and VY
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
                         VX = VX & VY
                         self.registers[self.X].set(VX)
+                        if VF_RESET:
+                            self.registers[0xF].set(0)
                     case 0x3: # SET VX to LOGICAL XOR of VX and VY
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
                         VX = VX ^ VY
                         self.registers[self.X].set(VX)
+                        if VF_RESET:
+                            self.registers[0xF].set(0)
                     case 0x4: # SET VX to SUM of VX and VY, IF VX overflows SET VF to 1 ELSE SET VF to 0
                         VX = self.registers[self.X].get()
                         VY = self.registers[self.Y].get()
