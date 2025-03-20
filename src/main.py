@@ -11,6 +11,7 @@ from display import Display
 from timer import Timer
 
 VF_RESET = True # Reset VF register after AND, OR, and XOR opcode
+MODERN_MEMORY = False # Don't increment I during FX55 and FX65 but use a temporary variable
 MODERN_SHIFT = True # SHIFT VX in place instead of MOVING VY to VX and then SHIFT
 MODERN_JUMP_WITH_OFFSET = True
 
@@ -227,10 +228,14 @@ class CPU:
                     case 0x55: # STORE VALUES in REGISTERS V0 to VX (inclusive) in MEMORY starting at I
                         VI = self.I.get()
                         for i in range(self.X+1):
+                            if not MODERN_MEMORY:
+                                self.I.set(self.I.get() + 1)
                             self.memory.write(VI+i, self.registers[i].get())
                     case 0x65: # READ VALUES in MEMORY FROM I to I+X and STORE in registers V0 to VX
                         VI = self.I.get()
                         for i in range(self.X + 1):
+                            if not MODERN_MEMORY:
+                                self.I.set(self.I.get() + 1)
                             Vi = self.memory.read(VI + i)
                             self.registers[i].set(Vi)
 
