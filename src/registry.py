@@ -16,6 +16,7 @@ class Registry:
 
 class ProgramCounter(Registry):
     def __init__(self):
+        Registry.__init__(self)
         self.value = 0x200
         self.max_value = None
     
