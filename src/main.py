@@ -211,7 +211,10 @@ class CPU:
                             self.registers[0xF].set(0)
                         self.I.set(VI)
                     case 0x0A: # BREAK until KEY PRESSED
-                        if len(keys_pressed) == 0:
+                        for key in keys_pressed_previous:
+                            if key in keys_up:
+                                break
+                        else:
                             self.PC.increment(-2)
                     case 0x29: # SET I to ADRESS of FONT_CHARACTER in VX
                         VX = self.registers[self.X].get()
@@ -305,10 +308,14 @@ SCANCODES = (
     0x19,
 )
 keys_pressed = set()
+keys_pressed_previous = set()
 
 clock = pygame.time.Clock()
 running = True
 while running:
+    keys_up = set()
+    keys_pressed_previous = keys_pressed.copy()
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -317,7 +324,8 @@ while running:
         elif event.type == pygame.KEYUP:
             if event.scancode in keys_pressed:
                 keys_pressed.remove(event.scancode)
-            
+                keys_up.add(event.scancode)
+    
     cpu.fetch()
     cpu.decode()
     
