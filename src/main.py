@@ -1,5 +1,4 @@
 import pygame
-from typing import Type
 import random
 import argparse
 import os
@@ -19,7 +18,8 @@ MODERN_JUMP_WITH_OFFSET = True
 os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 class CPU:
-    def __init__(self, memory, PC: Type[ProgramCounter], I, registers, display, stack, timer, buzzer):
+    def __init__(self, memory: Memory, PC: ProgramCounter, I: Registry, registers: [Registry], display: Display,
+                 stack: Stack, timer: Timer, buzzer: Timer):
         self.opcode = 0
         self.category = 0
         self.X = 0
