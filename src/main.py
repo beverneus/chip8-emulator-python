@@ -216,11 +216,11 @@ class CPU:
                                 break
                         else:
                             self.PC.increment(-2)
-                    case 0x29: # SET I to ADRESS of FONT_CHARACTER in VX
+                    case 0x29: # SET I to ADDRESS of FONT_CHARACTER in VX
                         VX = self.registers[self.X].get()
                         character = VX & 0b00001111
-                        character_adress = 0x50 + 5*character
-                        self.I.set(character_adress)
+                        character_address = 0x50 + 5*character
+                        self.I.set(character_address)
                     case 0x33: # SPLIT VX in its three decimal parts 'abc', PUT in MEMORY a at I, b at I+1, c at I+2
                         VX = self.registers[self.X].get()
                         VI = self.I.get()
